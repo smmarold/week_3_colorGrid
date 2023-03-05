@@ -13,12 +13,24 @@ hbs.registerHelper('table', (tableSize)=>{
 
     for(let i = 0; i<tableSize; i++){
         html += '<tr>';
-        for(let i = 0; i<tableSize; i++){
+        for(let j = 0; j<tableSize; j++){
 
             let color = ((1<<24)*Math.random()|0).toString(16);
             html += `<td style="background-color:#${color};">${color}<br /><div style="color: white;">${color}</div></td>`
         }
         html += '</tr>'
+    }
+
+    return new hbs.handlebars.SafeString(html);
+})
+
+hbs.registerHelper('error404', ()=>{
+    let html = ''
+    let divs = Math.floor(Math.random() * (50 - 20 + 1) + 20)
+
+    for(let i = 0; i<divs; i++){
+        let classStyle = Math.floor(Math.random() * (3 - 1 + 1) + 1) 
+        html += `<div class="${getClass(classStyle)}" >404</div>`
     }
 
     return new hbs.handlebars.SafeString(html);
@@ -42,7 +54,28 @@ app.post('/generate_table', (req, res)=>{
     res.render('table', {size: req.body.size})
 })
 
+app.get('*', (req, res) => {
+    res.render('notFound')
+})
+
 let port = process.env.PORT || 80;
 app.listen(port, () => {
 	console.log(`Server Running at localhost:${port}`);
 });
+
+let getClass = (num)=> {
+    let style;
+    switch(num) {
+        case 1:
+            style = "still"
+            break;
+        case 2:
+            style = "rotate"
+            break;
+        case 3:
+            style = "shrink"
+            break;
+    }
+
+    return style
+}
